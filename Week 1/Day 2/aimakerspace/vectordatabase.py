@@ -5,13 +5,19 @@ from aimakerspace.openai_utils.embedding import EmbeddingModel
 import asyncio
 
 
-def cosine_similarity(vector_a: np.array, vector_b: np.array) -> float:
-    """Computes the cosine similarity between two vectors."""
-    dot_product = np.dot(vector_a, vector_b)
-    norm_a = np.linalg.norm(vector_a)
-    norm_b = np.linalg.norm(vector_b)
-    return dot_product / (norm_a * norm_b)
+# def cosine_similarity(vector_a: np.array, vector_b: np.array) -> float:
+#     """Computes the cosine similarity between two vectors."""
+#     dot_product = np.dot(vector_a, vector_b)
+#     norm_a = np.linalg.norm(vector_a)
+#     norm_b = np.linalg.norm(vector_b)
+#     return dot_product / (norm_a * norm_b)
 
+def jaccard_distance(vector_a: np.array, vector_b: np.array) -> float:
+    set_a = set(vector_a)
+    set_b = set(vector_b)
+    intersection = len(set_a.intersection(set_b))
+    union = len(set_a.union(set_b))
+    return 1 - intersection / union
 
 class VectorDatabase:
     def __init__(self, embedding_model: EmbeddingModel = None):
@@ -25,7 +31,7 @@ class VectorDatabase:
         self,
         query_vector: np.array,
         k: int,
-        distance_measure: Callable = cosine_similarity,
+        distance_measure: Callable = jaccard_distance,
     ) -> List[Tuple[str, float]]:
         scores = [
             (key, distance_measure(query_vector, vector))
@@ -37,7 +43,7 @@ class VectorDatabase:
         self,
         query_text: str,
         k: int,
-        distance_measure: Callable = cosine_similarity,
+        distance_measure: Callable = jaccard_distance,
         return_as_text: bool = False,
     ) -> List[Tuple[str, float]]:
         query_vector = self.embedding_model.get_embedding(query_text)
