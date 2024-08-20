@@ -4,7 +4,6 @@ from typing import List, Tuple, Callable
 from aimakerspace.openai_utils.embedding import EmbeddingModel
 import asyncio
 
-
 # def cosine_similarity(vector_a: np.array, vector_b: np.array) -> float:
 #     """Computes the cosine similarity between two vectors."""
 #     dot_product = np.dot(vector_a, vector_b)
